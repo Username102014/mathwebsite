@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Mastery</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .fade-in {
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-500 to-purple-600 min-h-screen text-white font-sans">
+
+  <div id="app" class="p-6 max-w-3xl mx-auto fade-in">
+    <div id="auth" class="text-center">
+      <h1 class="text-4xl font-bold mb-4">Math Mastery</h1>
+      <input type="text" id="username" placeholder="Username" class="p-2 rounded text-black mb-2 w-full" />
+      <input type="password" id="password" placeholder="Password" class="p-2 rounded text-black mb-4 w-full" />
+      <button onclick="login()" class="bg-white text-indigo-600 font-bold py-2 px-4 rounded hover:bg-indigo-100">Login</button>
+      <button onclick="signup()" class="ml-2 bg-white text-purple-600 font-bold py-2 px-4 rounded hover:bg-purple-100">Sign Up</button>
+    </div>
+
+    <div id="dashboard" class="hidden fade-in">
+      <h2 class="text-2xl font-semibold mb-2">Welcome, <span id="userDisplay"></span> 👋</h2>
+      <p class="mb-2">Average Score: <span id="averageScore">0%</span></p>
+      <p class="mb-4">Topics to Improve: <span id="weakTopics">None yet</span></p>
+      <button onclick="startTest()" class="bg-yellow-400 text-black font-bold py-2 px-4 rounded hover:bg-yellow-300">Take a Test</button>
+    </div>
+
+    <div id="test" class="hidden fade-in">
+      <h2 class="text-xl font-bold mb-4">Math Test</h2>
+      <div id="questionContainer"></div>
+      <button onclick="submitTest()" class="mt-4 bg-green-400 text-black font-bold py-2 px-4 rounded hover:bg-green-300">Submit Test</button>
+    </div>
+
+    <div id="summary" class="hidden fade-in">
+      <h2 class="text-xl font-bold mb-2">Test Summary</h2>
+      <p>Your Score: <span id="scoreDisplay"></span>%</p>
+      <button onclick="goToDashboard()" class="mt-4 bg-blue-400 text-black font-bold py-2 px-4 rounded hover:bg-blue-300">Back to Dashboard</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Solve for x: 5x + 3 = 18",
+        answer: "x = 3",
+        explanation: "Undo addition by subtracting, then undo multiplication by dividing."
+      },
+      {
+        question: "Solve for y: 2y - 7 = 9",
+        answer: "y = 8",
+        explanation: "Undo subtraction then multiplication."
+      },
+      // Add more questions from your bank here...
+    ];
+
+    let currentUser = "";
+    let score = 0;
+
+    function login() {
+      currentUser = document.getElementById("username").value;
+      document.getElementById("auth").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+      document.getElementById("userDisplay").textContent = currentUser;
+    }
+
+    function signup() {
+      login(); // Placeholder for actual signup logic
+    }
+
+    function startTest() {
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("test").classList.remove("hidden");
+      renderQuestions();
+    }
+
+    function renderQuestions() {
+      const container = document.getElementById("questionContainer");
+      container.innerHTML = "";
+      questions.forEach((q, i) => {
+        container.innerHTML += `
+          <div class="mb-4">
+            <p class="font-semibold">${i + 1}. ${q.question}</p>
+            <input type="text" id="answer${i}" class="p-2 rounded text-black w-full mt-1" placeholder="Your answer" />
+            <div id="explanation${i}" class="hidden mt-2 text-sm text-yellow-200">${q.explanation}</div>
+            <button onclick="skipExplanation(${i})" class="text-xs text-white underline mt-1">Skip Explanation</button>
+          </div>
+        `;
+      });
+    }
+
+    function skipExplanation(i) {
+      document.getElementById(`explanation${i}`).classList.add("hidden");
+    }
+
+    function submitTest() {
+      score = 0;
+      questions.forEach((q, i) => {
+        const userAnswer = document.getElementById(`answer${i}`).value.trim();
+        if (userAnswer === q.answer) {
+          score++;
+        } else {
+          document.getElementById(`explanation${i}`).classList.remove("hidden");
+        }
+      });
+      const percent = Math.round((score / questions.length) * 100);
+      document.getElementById("scoreDisplay").textContent = percent;
+      document.getElementById("test").classList.add("hidden");
+      document.getElementById("summary").classList.remove("hidden");
+      document.getElementById("averageScore").textContent = percent + "%";
+      document.getElementById("weakTopics").textContent = percent < 70 ? "Algebra, Systems" : "None";
+    }
+
+    function goToDashboard() {
+      document.getElementById("summary").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
