@@ -2,67 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Math Mastery</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&display=swap" rel="stylesheet">
   <style>
+    body {
+      background-color: #ffebb8;
+      font-family: 'Lexend', sans-serif;
+      color: black;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+    }
+    input, button {
+      font-family: 'Lexend', sans-serif;
+      font-weight: 300;
+      padding: 0.5rem;
+      margin: 0.5rem;
+      width: 80%;
+      max-width: 300px;
+    }
+    .hidden {
+      display: none;
+    }
     .fade-in {
-      animation: fadeIn 1s ease-in-out forwards;
+      animation: fadeIn 0.5s ease-in-out;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .status-bar {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
   </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-500 to-purple-600 min-h-screen text-white font-sans">
-
-  <div id="app" class="p-6 max-w-3xl mx-auto fade-in">
-    <div id="auth" class="text-center">
-      <h1 class="text-4xl font-bold mb-4">Math Mastery</h1>
-      <input type="text" id="username" placeholder="Username" class="p-2 rounded text-black mb-2 w-full" />
-      <input type="password" id="password" placeholder="Password" class="p-2 rounded text-black mb-4 w-full" />
-      <button onclick="login()" class="bg-white text-indigo-600 font-bold py-2 px-4 rounded hover:bg-indigo-100">Login</button>
-      <button onclick="signup()" class="ml-2 bg-white text-purple-600 font-bold py-2 px-4 rounded hover:bg-purple-100">Sign Up</button>
+<body>
+  <div class="container">
+    <div id="auth">
+      <h1 class="text-3xl font-light mb-4">Math Mastery</h1>
+      <input type="text" id="username" placeholder="Username" /><br/>
+      <input type="password" id="password" placeholder="Password" /><br/>
+      <button onclick="login()">Login</button>
+      <button onclick="signup()">Sign Up</button>
     </div>
 
     <div id="dashboard" class="hidden fade-in">
-      <h2 class="text-2xl font-semibold mb-2">Welcome, <span id="userDisplay"></span> 👋</h2>
-      <p class="mb-2">Average Score: <span id="averageScore">0%</span></p>
-      <p class="mb-4">Topics to Improve: <span id="weakTopics">None yet</span></p>
-      <button onclick="startTest()" class="bg-yellow-400 text-black font-bold py-2 px-4 rounded hover:bg-yellow-300">Take a Test</button>
+      <h2 class="text-2xl font-light">Welcome, <span id="userDisplay"></span></h2>
+      <p>Average Score: <span id="averageScore">0%</span></p>
+      <p>Topics to Improve: <span id="weakTopics">None yet</span></p>
+      <div class="status-bar" id="statusBar">You're Cooked 💀</div>
+      <button onclick="startTest()">Take a Test</button>
     </div>
 
     <div id="test" class="hidden fade-in">
-      <h2 class="text-xl font-bold mb-4">Math Test</h2>
-      <div id="questionContainer"></div>
-      <button onclick="submitTest()" class="mt-4 bg-green-400 text-black font-bold py-2 px-4 rounded hover:bg-green-300">Submit Test</button>
+      <h2 class="text-xl font-light">Question <span id="questionNumber">1</span> of 10</h2>
+      <p id="questionText"></p>
+      <input type="text" id="userAnswer" placeholder="Your answer" /><br/>
+      <button onclick="submitAnswer()">Submit</button>
+      <p id="feedback" class="fade-in"></p>
     </div>
 
     <div id="summary" class="hidden fade-in">
-      <h2 class="text-xl font-bold mb-2">Test Summary</h2>
+      <h2 class="text-xl font-light">Test Summary</h2>
       <p>Your Score: <span id="scoreDisplay"></span>%</p>
-      <button onclick="goToDashboard()" class="mt-4 bg-blue-400 text-black font-bold py-2 px-4 rounded hover:bg-blue-300">Back to Dashboard</button>
+      <button onclick="goToDashboard()">Back to Dashboard</button>
     </div>
   </div>
 
   <script>
     const questions = [
-      {
-        question: "Solve for x: 5x + 3 = 18",
-        answer: "x = 3",
-        explanation: "Undo addition by subtracting, then undo multiplication by dividing."
-      },
-      {
-        question: "Solve for y: 2y - 7 = 9",
-        answer: "y = 8",
-        explanation: "Undo subtraction then multiplication."
-      },
-      // Add more questions from your bank here...
+      { q: "Solve for x: 5x + 3 = 18", a: "x = 3", topic: "Algebra" },
+      { q: "Solve for y: 2y - 7 = 9", a: "y = 8", topic: "Algebra" },
+      { q: "Solve for b: A = b * h", a: "b = A divided by h", topic: "Formulas" },
+      { q: "Solve for r: C = 2 * pi * r", a: "r = C divided by (2 times pi)", topic: "Formulas" },
+      { q: "Solve for m: y = m * x + b", a: "m = (y minus b) divided by x", topic: "Algebra" },
+      { q: "Solve for h: A = (1/2) * b * h", a: "h = (2 times A) divided by b", topic: "Formulas" },
+      { q: "Solve for x: 4 * (x - 2) = 12", a: "x = 5", topic: "Algebra" },
+      { q: "Solve for y: 3y + 5 = 2y + 10", a: "y = 5", topic: "Algebra" },
+      { q: "Put in slope-intercept form: 3x + 2y = 12", a: "y = (-3/2) times x plus 6", topic: "Linear Equations" },
+      { q: "a1 = 2, an = an-1 + 3. List first 5 terms.", a: "2, 5, 8, 11, 14", topic: "Sequences" }
     ];
 
     let currentUser = "";
+    let currentQuestion = 0;
     let score = 0;
+    let correctTopics = new Set();
 
     function login() {
       currentUser = document.getElementById("username").value;
@@ -72,50 +103,66 @@
     }
 
     function signup() {
-      login(); // Placeholder for actual signup logic
+      login(); // Placeholder
     }
 
     function startTest() {
+      currentQuestion = 0;
+      score = 0;
+      correctTopics.clear();
       document.getElementById("dashboard").classList.add("hidden");
       document.getElementById("test").classList.remove("hidden");
-      renderQuestions();
+      showQuestion();
     }
 
-    function renderQuestions() {
-      const container = document.getElementById("questionContainer");
-      container.innerHTML = "";
-      questions.forEach((q, i) => {
-        container.innerHTML += `
-          <div class="mb-4">
-            <p class="font-semibold">${i + 1}. ${q.question}</p>
-            <input type="text" id="answer${i}" class="p-2 rounded text-black w-full mt-1" placeholder="Your answer" />
-            <div id="explanation${i}" class="hidden mt-2 text-sm text-yellow-200">${q.explanation}</div>
-            <button onclick="skipExplanation(${i})" class="text-xs text-white underline mt-1">Skip Explanation</button>
-          </div>
-        `;
-      });
+    function showQuestion() {
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("userAnswer").value = "";
+      document.getElementById("questionNumber").textContent = currentQuestion + 1;
+      document.getElementById("questionText").textContent = questions[currentQuestion].q;
     }
 
-    function skipExplanation(i) {
-      document.getElementById(`explanation${i}`).classList.add("hidden");
-    }
+    function submitAnswer() {
+      const userInput = document.getElementById("userAnswer").value.trim();
+      const correct = questions[currentQuestion].a;
+      const topic = questions[currentQuestion].topic;
+      const feedback = document.getElementById("feedback");
 
-    function submitTest() {
-      score = 0;
-      questions.forEach((q, i) => {
-        const userAnswer = document.getElementById(`answer${i}`).value.trim();
-        if (userAnswer === q.answer) {
-          score++;
+      if (userInput.toLowerCase() === correct.toLowerCase()) {
+        score++;
+        correctTopics.add(topic);
+        feedback.textContent = "✅ Correct!";
+      } else {
+        feedback.textContent = `❌ Wrong. Correct answer: ${correct}`;
+      }
+
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          showQuestion();
         } else {
-          document.getElementById(`explanation${i}`).classList.remove("hidden");
+          showSummary();
         }
-      });
+      }, 1500);
+    }
+
+    function showSummary() {
       const percent = Math.round((score / questions.length) * 100);
       document.getElementById("scoreDisplay").textContent = percent;
       document.getElementById("test").classList.add("hidden");
       document.getElementById("summary").classList.remove("hidden");
+
       document.getElementById("averageScore").textContent = percent + "%";
-      document.getElementById("weakTopics").textContent = percent < 70 ? "Algebra, Systems" : "None";
+      const weak = percent < 75 ? "All Topics" : "None";
+      document.getElementById("weakTopics").textContent = weak;
+
+      const passedTopics = correctTopics.size;
+      const status = document.getElementById("statusBar");
+      if (passedTopics === 0) status.textContent = "You're Cooked 💀";
+      else if (passedTopics === 1) status.textContent = "Clutch Up 🔥";
+      else if (passedTopics === 2) status.textContent = "Keep Grinding 💪";
+      else if (passedTopics === 3) status.textContent = "You Did It 👏🎉";
+      else status.textContent = "COOK UP BOI 🍳👨‍🍳";
     }
 
     function goToDashboard() {
@@ -125,3 +172,4 @@
   </script>
 </body>
 </html>
+
